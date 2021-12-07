@@ -29,7 +29,7 @@ $ git composer require league/oauth2-server
 ### Installation
 
 ```
-$ git clone https://github.com/LucasGreard/Snowtricks_V5.git
+$ git clone https://github.com/LucasGreard/WebService-API
 ```
 
 ## Fabriqué avec

@@ -2,6 +2,9 @@
     "composer/package-versions-deprecated": {
         "version": "1.11.99.4"
     },
+    "defuse/php-encryption": {
+        "version": "v2.3.1"
+    },
     "doctrine/annotations": {
         "version": "1.13",
         "recipe": {
@@ -123,6 +126,18 @@
     "laminas/laminas-code": {
         "version": "4.4.3"
     },
+    "lcobucci/clock": {
+        "version": "2.0.0"
+    },
+    "lcobucci/jwt": {
+        "version": "4.0.4"
+    },
+    "league/event": {
+        "version": "2.2.0"
+    },
+    "league/oauth2-server": {
+        "version": "8.3.3"
+    },
     "monolog/monolog": {
         "version": "2.3.5"
     },
@@ -147,6 +162,9 @@
     },
     "pagerfanta/pagerfanta": {
         "version": "v3.4.0"
+    },
+    "paragonie/random_compat": {
+        "version": "v9.99.100"
     },
     "phar-io/manifest": {
         "version": "2.0.3"
@@ -206,6 +224,9 @@
     },
     "psr/event-dispatcher": {
         "version": "1.0.0"
+    },
+    "psr/http-message": {
+        "version": "1.0.1"
     },
     "psr/link": {
         "version": "1.0.0"
