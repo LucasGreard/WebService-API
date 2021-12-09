@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
+use App\Repository\CountryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ClientRepository::class)
+ * @ORM\Entity(repositoryClass=CountryRepository::class)
  */
-class Client
+class Country
 {
     /**
      * @ORM\Id
@@ -22,20 +22,20 @@ class Client
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $fullname;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $created_at;
+    private $country;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $password;
+    private $money;
 
     /**
-     * @ORM\OneToMany(targetEntity=Buyer::class, mappedBy="client")
+     * @ORM\Column(type="float")
+     */
+    private $coeff_change;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Buyer::class, mappedBy="country")
      */
     private $buyers;
 
@@ -49,38 +49,38 @@ class Client
         return $this->id;
     }
 
-    public function getFullname(): ?string
+    public function getCountry(): ?string
     {
-        return $this->fullname;
+        return $this->country;
     }
 
-    public function setFullname(string $fullname): self
+    public function setCountry(string $country): self
     {
-        $this->fullname = $fullname;
+        $this->country = $country;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getMoney(): ?string
     {
-        return $this->created_at;
+        return $this->money;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
+    public function setMoney(string $money): self
     {
-        $this->created_at = $created_at;
+        $this->money = $money;
 
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getCoeffChange(): ?float
     {
-        return $this->password;
+        return $this->coeff_change;
     }
 
-    public function setPassword(string $password): self
+    public function setCoeffChange(float $coeff_change): self
     {
-        $this->password = $password;
+        $this->coeff_change = $coeff_change;
 
         return $this;
     }
@@ -97,7 +97,7 @@ class Client
     {
         if (!$this->buyers->contains($buyer)) {
             $this->buyers[] = $buyer;
-            $buyer->setClient($this);
+            $buyer->setCountry($this);
         }
 
         return $this;
@@ -107,8 +107,8 @@ class Client
     {
         if ($this->buyers->removeElement($buyer)) {
             // set the owning side to null (unless already changed)
-            if ($buyer->getClient() === $this) {
-                $buyer->setClient(null);
+            if ($buyer->getCountry() === $this) {
+                $buyer->setCountry(null);
             }
         }
 
