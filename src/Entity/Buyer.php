@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\BuyerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Entity(repositoryClass=BuyerRepository::class)
  */
-class User
+class Buyer
 {
     /**
      * @ORM\Id
@@ -33,12 +33,12 @@ class User
     private $city;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $postal_code;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $age;
 
@@ -48,9 +48,16 @@ class User
     private $product_buy = [];
 
     /**
-     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
+     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="buyers")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $client;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Country::class, inversedBy="buyers")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $country;
 
     public function getId(): ?int
     {
@@ -137,6 +144,18 @@ class User
     public function setClient(?Client $client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getCountry(): ?Country
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?Country $country): self
+    {
+        $this->country = $country;
 
         return $this;
     }

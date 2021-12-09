@@ -20,37 +20,33 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $fullname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     */
+    private $model;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Brand::class, inversedBy="products")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $brand;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @ORM\Column(type="float")
      */
     private $price;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $weight;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $operating_system;
-
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $screen_size;
-
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $network_type;
 
     /**
      * @ORM\Column(type="integer")
@@ -60,108 +56,103 @@ class Product
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $autonomy;
+    private $battery;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $resolution;
-
-    /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=45)
      */
     private $RAM;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $img = [];
+    private $image = [];
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Resolution::class, inversedBy="products")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $resolution_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=OperatingSystem::class, inversedBy="products")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $operating_system_id;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getFullname(): ?string
     {
-        return $this->name;
+        return $this->fullname;
     }
 
-    public function setName(string $name): self
+    public function setFullname(string $fullname): self
     {
-        $this->name = $name;
+        $this->fullname = $fullname;
 
         return $this;
     }
 
-    public function getBrand(): ?string
+    public function getModel(): ?string
+    {
+        return $this->model;
+    }
+
+    public function setModel(string $model): self
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    public function getBrand(): ?Brand
     {
         return $this->brand;
     }
 
-    public function setBrand(string $brand): self
+    public function setBrand(?Brand $brand): self
     {
         $this->brand = $brand;
 
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(string $price): self
+    public function setPrice(float $price): self
     {
         $this->price = $price;
 
         return $this;
     }
 
-    public function getWeight(): ?string
+    public function getWeight(): ?float
     {
         return $this->weight;
     }
 
-    public function setWeight(string $weight): self
+    public function setWeight(?float $weight): self
     {
         $this->weight = $weight;
 
         return $this;
     }
 
-    public function getOperatingSystem(): ?string
-    {
-        return $this->operating_system;
-    }
-
-    public function setOperatingSystem(string $operating_system): self
-    {
-        $this->operating_system = $operating_system;
-
-        return $this;
-    }
-
-    public function getScreenSize(): ?string
+    public function getScreenSize(): ?float
     {
         return $this->screen_size;
     }
 
-    public function setScreenSize(?string $screen_size): self
+    public function setScreenSize(?float $screen_size): self
     {
         $this->screen_size = $screen_size;
-
-        return $this;
-    }
-
-    public function getNetworkType(): ?string
-    {
-        return $this->network_type;
-    }
-
-    public function setNetworkType(?string $network_type): self
-    {
-        $this->network_type = $network_type;
 
         return $this;
     }
@@ -178,26 +169,14 @@ class Product
         return $this;
     }
 
-    public function getAutonomy(): ?int
+    public function getBattery(): ?int
     {
-        return $this->autonomy;
+        return $this->battery;
     }
 
-    public function setAutonomy(?int $autonomy): self
+    public function setBattery(?int $battery): self
     {
-        $this->autonomy = $autonomy;
-
-        return $this;
-    }
-
-    public function getResolution(): ?string
-    {
-        return $this->resolution;
-    }
-
-    public function setResolution(string $resolution): self
-    {
-        $this->resolution = $resolution;
+        $this->battery = $battery;
 
         return $this;
     }
@@ -214,14 +193,38 @@ class Product
         return $this;
     }
 
-    public function getImg(): ?array
+    public function getImage(): ?array
     {
-        return $this->img;
+        return $this->image;
     }
 
-    public function setImg(array $img): self
+    public function setImage(?array $image): self
     {
-        $this->img = $img;
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getResolutionId(): ?Resolution
+    {
+        return $this->resolution_id;
+    }
+
+    public function setResolutionId(?Resolution $resolution_id): self
+    {
+        $this->resolution_id = $resolution_id;
+
+        return $this;
+    }
+
+    public function getOperatingSystemId(): ?OperatingSystem
+    {
+        return $this->operating_system_id;
+    }
+
+    public function setOperatingSystemId(?OperatingSystem $operating_system_id): self
+    {
+        $this->operating_system_id = $operating_system_id;
 
         return $this;
     }
