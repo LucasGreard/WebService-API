@@ -24,10 +24,10 @@ class OperatingSystem
      */
     private $operating_system;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="operating_system_id")
-     */
-    private $products;
+    // /**
+    //  * @ORM\OneToMany(targetEntity=Product::class, mappedBy="operating_system_id")
+    //  */
+    // private $products;
 
     public function __construct()
     {
@@ -51,33 +51,33 @@ class OperatingSystem
         return $this;
     }
 
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
+    // /**
+    //  * @return Collection|Product[]
+    //  */
+    // public function getProducts(): Collection
+    // {
+    //     return $this->products;
+    // }
 
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setOperatingSystemId($this);
-        }
+    // public function addProduct(Product $product): self
+    // {
+    //     if (!$this->products->contains($product)) {
+    //         $this->products[] = $product;
+    //         $product->setOperatingSystemId($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getOperatingSystemId() === $this) {
-                $product->setOperatingSystemId(null);
-            }
-        }
+    // public function removeProduct(Product $product): self
+    // {
+    //     if ($this->products->removeElement($product)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($product->getOperatingSystemId() === $this) {
+    //             $product->setOperatingSystemId(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }

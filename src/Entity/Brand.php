@@ -24,10 +24,10 @@ class Brand
      */
     private $brand;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="brand")
-     */
-    private $products;
+    // /**
+    //  * @ORM\OneToMany(targetEntity=Product::class, mappedBy="brand")
+    //  */
+    // private $products;
 
     public function __construct()
     {
@@ -51,33 +51,33 @@ class Brand
         return $this;
     }
 
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
+    // /**
+    //  * @return Collection|Product[]
+    //  */
+    // public function getProducts(): Collection
+    // {
+    //     return $this->products;
+    // }
 
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setBrand($this);
-        }
+    // public function addProduct(Product $product): self
+    // {
+    //     if (!$this->products->contains($product)) {
+    //         $this->products[] = $product;
+    //         $product->setBrand($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
-            }
-        }
+    // public function removeProduct(Product $product): self
+    // {
+    //     if ($this->products->removeElement($product)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($product->getBrand() === $this) {
+    //             $product->setBrand(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
