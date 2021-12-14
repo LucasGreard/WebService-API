@@ -6,11 +6,8 @@ use App\Entity\Product;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
-use Pagerfanta\Adapter\ArrayAdapter;
-use Pagerfanta\Pagerfanta;
 
 class ProductController extends AbstractController
 {
@@ -20,11 +17,14 @@ class ProductController extends AbstractController
      *     name = "app_product_show",
      *     requirements = {"id"="\d+"}
      * )
-     * @View
+     * @View(statusCode=200)
      */
     public function showProduct(ManagerRegistry $doctrine, int $id)
     {
         $product = $doctrine->getRepository(Product::class)->returnProduct($id);
+        if (!$product) {
+            return new Response("Produit non trouvé", Response::HTTP_NOT_FOUND);
+        }
         return $product;
     }
 
@@ -39,9 +39,9 @@ class ProductController extends AbstractController
     {
 
         $product = $doctrine->getRepository(Product::class)->findAll();
-        $adapter = new ArrayAdapter($product);
-        $pagerfanta = new Pagerfanta($adapter);
-        $currentPageResults = $pagerfanta->getCurrentPageResults();
-        return $currentPageResults;
+        if (!$product) {
+            return new Response("Produits non trouvé", Response::HTTP_NOT_FOUND);
+        }
+        return $product;
     }
 }
