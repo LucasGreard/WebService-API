@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 
 class ProductController extends AbstractController
 {
@@ -35,7 +37,11 @@ class ProductController extends AbstractController
      */
     public function showProducts(ManagerRegistry $doctrine)
     {
+
         $product = $doctrine->getRepository(Product::class)->findAll();
-        return $product;
+        $adapter = new ArrayAdapter($product);
+        $pagerfanta = new Pagerfanta($adapter);
+        $currentPageResults = $pagerfanta->getCurrentPageResults();
+        return $currentPageResults;
     }
 }

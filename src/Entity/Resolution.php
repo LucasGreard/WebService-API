@@ -29,10 +29,10 @@ class Resolution
      */
     private $width;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="resolution_id")
-     */
-    private $products;
+    // /**
+    //  * @ORM\OneToMany(targetEntity=Product::class, mappedBy="resolution_id")
+    //  */
+    // private $products;
 
     public function __construct()
     {
@@ -68,33 +68,33 @@ class Resolution
         return $this;
     }
 
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
+    // /**
+    //  * @return Collection|Product[]
+    //  */
+    // public function getProducts(): Collection
+    // {
+    //     return $this->products;
+    // }
 
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setResolutionId($this);
-        }
+    // public function addProduct(Product $product): self
+    // {
+    //     if (!$this->products->contains($product)) {
+    //         $this->products[] = $product;
+    //         $product->setResolutionId($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getResolutionId() === $this) {
-                $product->setResolutionId(null);
-            }
-        }
+    // public function removeProduct(Product $product): self
+    // {
+    //     if ($this->products->removeElement($product)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($product->getResolutionId() === $this) {
+    //             $product->setResolutionId(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
