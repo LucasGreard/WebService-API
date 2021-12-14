@@ -6,9 +6,11 @@ use App\Repository\ResolutionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ResolutionRepository::class)
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class Resolution
 {
@@ -21,11 +23,13 @@ class Resolution
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Serializer\Expose()
      */
     private $height;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Serializer\Expose()
      */
     private $width;
 

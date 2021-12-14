@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class Product
 {
@@ -19,64 +21,76 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose()
      */
     private $fullname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose()
      */
     private $model;
 
     /**
      * @ORM\ManyToOne(targetEntity=Brand::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Expose()
      */
     private $brand;
 
     /**
      * @ORM\Column(type="float")
+     * @Serializer\Expose()
      */
     private $price;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Serializer\Expose()
      */
     private $weight;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Serializer\Expose()
      */
     private $screen_size;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Expose()
      */
     private $storage;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Serializer\Expose()
      */
     private $battery;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Serializer\Expose()
      */
     private $RAM;
 
     /**
      * @ORM\Column(type="json", nullable=true)
+     * @Serializer\Expose()
      */
     private $image = [];
 
     /**
      * @ORM\ManyToOne(targetEntity=Resolution::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Expose()
      */
     private $resolution_id;
 
     /**
      * @ORM\ManyToOne(targetEntity=OperatingSystem::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Expose()
      */
     private $operating_system_id;
 
