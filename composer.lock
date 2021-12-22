@@ -2562,16 +2562,16 @@
         },
         {
             "name": "pagerfanta/pagerfanta",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BabDev/Pagerfanta.git",
-                "reference": "714f88f678daacbe001b0dbf3f64fdb26504dc2f"
+                "reference": "a5837087a08d71bb8b6d40a9736abf32f8eeda26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BabDev/Pagerfanta/zipball/714f88f678daacbe001b0dbf3f64fdb26504dc2f",
-                "reference": "714f88f678daacbe001b0dbf3f64fdb26504dc2f",
+                "url": "https://api.github.com/repos/BabDev/Pagerfanta/zipball/a5837087a08d71bb8b6d40a9736abf32f8eeda26",
+                "reference": "a5837087a08d71bb8b6d40a9736abf32f8eeda26",
                 "shasum": ""
             },
             "require": {
@@ -2654,7 +2654,7 @@
             ],
             "support": {
                 "issues": "https://github.com/BabDev/Pagerfanta/issues",
-                "source": "https://github.com/BabDev/Pagerfanta/tree/v3.5.0"
+                "source": "https://github.com/BabDev/Pagerfanta/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -2662,7 +2662,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-12-01T01:05:14+00:00"
+            "time": "2021-12-09T00:40:21+00:00"
         },
         {
             "name": "paragonie/random_compat",
