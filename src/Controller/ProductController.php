@@ -36,26 +36,36 @@ class ProductController extends AbstractController
 
     /**
      * @Get(
-     *     path = "/products&limit={limit}",
+     *     path = "/products&limit={limit}&page={page}",
      *     name = "app_products_get",
      * )
      * @View
      * @QueryParam(
      *   name="limit"
      * )
+     * @QueryParam(
+     *   name="page"
+     * )
      */
-    public function getProducts(ManagerRegistry $doctrine, $limit)
+    public function getProducts(ManagerRegistry $doctrine, $limit, $page)
     {
-
         $products = $doctrine->getRepository(Product::class)->findAll();
-        $offset = 3;
         $paginate = new PaginationController();
-        $result = $paginate->paginate($products, $limit, $offset);
-        // return new JsonResponse(["data" => $result]);
-
-
+        $result = $paginate->paginate($products, $limit, $page);
+        $nbPage = $paginate->nbPage($products, $limit);
         if (!$result)
             return $this->json("Aucune donnée", 400);
-        return $this->json($result, 200);
+
+        return $this->json([
+            $result,
+            [
+                "paginate : ",
+                [
+                    "limit" => $limit,
+                    "number of page" => $nbPage,
+                    "current page" => $page
+                ]
+            ]
+        ], 200,);
     }
 }
