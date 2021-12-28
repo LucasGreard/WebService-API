@@ -17,23 +17,36 @@ class PaginationController extends AbstractController
 
     public function paginate($data, $limit, $page)
     {
-        if (0 == $limit)
-            throw new \LogicException('Limit must be greater than 0.');
+        // if (0 == $limit)
+        //     throw new \LogicException('Limit must be greater than 0.');
         if ($page == null)
             $page = 1;
 
         $pagerfanta = $this->createPagerFanta($data);
         $pagerfanta->setMaxPerPage($limit);
         if ($page > $pagerfanta->getNbPages())
-            throw new \LogicException('La limite de page est de ' . $pagerfanta->getNbPages());
-            
+            throw new ExceptionController('La limite de page est de ' . $pagerfanta->getNbPages());
+
         $pagerfanta->setCurrentPage($page);
         return $pagerfanta->getCurrentPageResults();
     }
+
     public function nbPage($data, $limit)
     {
         $pagerfanta = $this->createPagerFanta($data);
         $pagerfanta->setMaxPerPage($limit);
         return $pagerfanta->getNbPages();
+    }
+
+    public function getModelPagination($limit, $nbPage, $page)
+    {
+        return [
+            "paginate : ",
+            [
+                "limit" => $limit,
+                "number of page" => $nbPage,
+                "current page" => $page
+            ]
+        ];
     }
 }
