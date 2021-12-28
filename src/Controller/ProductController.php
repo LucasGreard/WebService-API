@@ -5,20 +5,18 @@ namespace App\Controller;
 use App\Entity\Product;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use App\Controller\PaginationController;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Controller\ExceptionController;
 
 class ProductController extends AbstractController
 {
     /**
      * @Get(
      *     path = "/product/{id}",
-     *     name = "app_product_get",
-     *     requirements = {"id"="\d+"}
+     *     name = "app_product_get"
      * )
      * @View(statusCode=200)
      * 
@@ -26,12 +24,18 @@ class ProductController extends AbstractController
      *   name="Param"
      * )
      */
-    public function getProduct(ManagerRegistry $doctrine, int $id)
+    public function getProduct(ManagerRegistry $doctrine, $id)
     {
-        $product = $doctrine->getRepository(Product::class)->returnProduct($id);
-        if (!$product)
-            return $this->json("not found", 404);
-        return $this->json($product, 200);
+
+        try {
+            if (!$id || $id < 1 || is_int($id))
+                throw new ExceptionController("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
+
+            $product = $doctrine->getRepository(Product::class)->returnProduct($id);
+            return $this->json($product, 200);
+        } catch (ExceptionController $e) {
+            return $this->json($e->getMessage(), 400);
+        }
     }
 
     /**
@@ -47,25 +51,30 @@ class ProductController extends AbstractController
      *   name="page"
      * )
      */
-    public function getProducts(ManagerRegistry $doctrine, $limit, $page)
+    public function getProducts(ManagerRegistry $doctrine, $limit, $page, PaginationController $paginate)
     {
-        $products = $doctrine->getRepository(Product::class)->findAll();
-        $paginate = new PaginationController();
-        $result = $paginate->paginate($products, $limit, $page);
-        $nbPage = $paginate->nbPage($products, $limit);
-        if (!$result)
-            return $this->json("Aucune donnée", 400);
+        try {
 
-        return $this->json([
-            $result,
-            [
-                "paginate : ",
-                [
-                    "limit" => $limit,
-                    "number of page" => $nbPage,
-                    "current page" => $page
-                ]
-            ]
-        ], 200,);
+            if (!$limit || $limit < 1 || is_int($limit))
+                throw new ExceptionController("La valeur de limit n'est pas bonne");
+
+            if (!$page || $page < 1 || is_int($page))
+                throw new ExceptionController("La valeur de page n'est pas bonne");
+
+            $products = $doctrine->getRepository(Product::class)->findAll();
+            $paginate = new PaginationController();
+            $result = $paginate->paginate($products, $limit, $page);
+            $nbPage = $paginate->nbPage($products, $limit);
+
+            if (!$result)
+                throw new ExceptionController("Aucune donnée");
+
+            return $this->json([
+                $paginate->getModelPagination($limit, $page, $nbPage),
+                $result
+            ], 200,);
+        } catch (ExceptionController $e) {
+            return $this->json($e->getMessage(), 400);
+        }
     }
 }
