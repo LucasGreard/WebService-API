@@ -17,8 +17,6 @@ class PaginationController extends AbstractController
 
     public function paginate($data, $limit, $page)
     {
-        // if (0 == $limit)
-        //     throw new \LogicException('Limit must be greater than 0.');
         if ($page == null)
             $page = 1;
 
