@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Exception\ResourceValidationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
@@ -17,16 +18,20 @@ class PaginationController extends AbstractController
 
     public function paginate($data, $limit, $page)
     {
-        if ($page == null)
-            $page = 1;
+        try {
+            if ($page == null)
+                $page = 1;
 
-        $pagerfanta = $this->createPagerFanta($data);
-        $pagerfanta->setMaxPerPage($limit);
-        if ($page > $pagerfanta->getNbPages())
-            throw new ExceptionController('La limite de page est de ' . $pagerfanta->getNbPages());
+            $pagerfanta = $this->createPagerFanta($data);
+            $pagerfanta->setMaxPerPage($limit);
+            if ($page > $pagerfanta->getNbPages())
+                throw new ResourceValidationException('La limite de page est de ' . $pagerfanta->getNbPages());
 
-        $pagerfanta->setCurrentPage($page);
-        return $pagerfanta->getCurrentPageResults();
+            $pagerfanta->setCurrentPage($page);
+            return $pagerfanta->getCurrentPageResults();
+        } catch (ResourceValidationException $e) {
+            return $this->json(["error" => $e->getMessage()], 400);
+        }
     }
 
     public function nbPage($data, $limit)
