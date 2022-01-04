@@ -28,6 +28,9 @@ fos_rest:
   format_listener:
     rules:
         - { path: '^/', priorities: ['json'], fallback_format: 'json' }
-
+  exception:
+        enabled: true
+        codes:
+           { App\Exception\ResourceValidationException: 400 }
 sensio_framework_extra:
   view: { annotations: false } // éviter les collisions avec l'annotation  @View  du FOSRestBundle
