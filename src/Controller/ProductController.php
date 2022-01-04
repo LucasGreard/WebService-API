@@ -10,6 +10,9 @@ use FOS\RestBundle\Controller\Annotations\View;
 use App\Controller\PaginationController;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use App\Controller\ExceptionController;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 class ProductController extends AbstractController
 {
@@ -23,6 +26,10 @@ class ProductController extends AbstractController
      * @QueryParam(
      *   name="Param"
      * )
+     * @OA\Response(
+     *     response=200,
+     *     @Model(type=Product::class)
+     * )
      */
     public function getProduct(ManagerRegistry $doctrine, $id)
     {
@@ -34,7 +41,7 @@ class ProductController extends AbstractController
             $product = $doctrine->getRepository(Product::class)->returnProduct($id);
             return $this->json($product, 200);
         } catch (ExceptionController $e) {
-            return $this->json($e->getMessage(), 400);
+            return $this->json(["error" => $e->getMessage()], 400);
         }
     }
 
@@ -74,7 +81,7 @@ class ProductController extends AbstractController
                 $result
             ], 200,);
         } catch (ExceptionController $e) {
-            return $this->json($e->getMessage(), 400);
+            return $this->json(["error" => $e->getMessage()], 400);
         }
     }
 }

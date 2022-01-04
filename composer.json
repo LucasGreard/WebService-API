@@ -16,7 +16,7 @@
         "jms/serializer": "^3.16",
         "jms/serializer-bundle": "^4.0",
         "league/oauth2-server": "^8.3",
-        "nelmio/api-doc-bundle": "^4.6",
+        "nelmio/api-doc-bundle": "^4.8",
         "pagerfanta/pagerfanta": "^3.5",
         "phpdocumentor/reflection-docblock": "^5.3",
         "sensio/framework-extra-bundle": "^6.1",
