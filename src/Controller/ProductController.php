@@ -9,11 +9,10 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use App\Controller\PaginationController;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
-use App\Controller\ExceptionController;
 use App\Exception\ResourceValidationException;
-use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class ProductController extends AbstractController
 {
@@ -29,7 +28,8 @@ class ProductController extends AbstractController
      * )
      * @OA\Response(
      *     response=200,
-     *     @Model(type=Product::class)
+     *     description="Returns a product with details"
+     *     )
      * )
      */
     public function getProduct(ManagerRegistry $doctrine, $id)
@@ -57,6 +57,11 @@ class ProductController extends AbstractController
      * )
      * @QueryParam(
      *   name="page"
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns all product with details (We need a limit and a page)"
+     *     )
      * )
      */
     public function getProducts(ManagerRegistry $doctrine, $limit, $page, PaginationController $paginate)
