@@ -26,8 +26,10 @@ fos_rest:
   serializer:
     serialize_null: true
   format_listener:
+    enabled: true
     rules:
-        - { path: '^/', priorities: ['json'], fallback_format: 'json' }
+        - { path: '^/', priorities: ['json','html'], fallback_format: 'json' }
+
   exception:
         enabled: true
         codes:

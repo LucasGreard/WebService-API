@@ -33,10 +33,10 @@ class Resolution
      */
     private $width;
 
-    // /**
-    //  * @ORM\OneToMany(targetEntity=Product::class, mappedBy="resolution_id")
-    //  */
-    // private $products;
+    /**
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="resolution_id")
+     */
+    private $products;
 
     public function __construct()
     {
