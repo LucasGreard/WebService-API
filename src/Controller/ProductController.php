@@ -18,7 +18,7 @@ class ProductController extends AbstractController
 {
     /**
      * @Get(
-     *     path = "/product/{id}",
+     *     path = "/api/product/{id}",
      *     name = "app_product_get"
      * )
      * @View(statusCode=200)
@@ -48,7 +48,7 @@ class ProductController extends AbstractController
 
     /**
      * @Get(
-     *     path = "/products&limit={limit}&page={page}",
+     *     path = "/api/products&limit={limit}&page={page}",
      *     name = "app_products_get",
      * )
      * @View

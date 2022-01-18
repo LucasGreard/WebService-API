@@ -30,14 +30,14 @@ class Client
     private $created_at;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $password;
-
-    /**
      * @ORM\OneToMany(targetEntity=Buyer::class, mappedBy="client")
      */
     private $buyers;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email;
 
     public function __construct()
     {
@@ -73,18 +73,6 @@ class Client
         return $this;
     }
 
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Buyer[]
      */
@@ -111,6 +99,18 @@ class Client
                 $buyer->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

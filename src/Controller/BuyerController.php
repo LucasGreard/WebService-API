@@ -9,12 +9,10 @@ use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use App\Exception\ResourceValidationException;
-use DateTime;
 use Symfony\Component\HttpFoundation\Request;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use App\Entity\Client;
+use FOS\RestBundle\Controller\Annotations\Get;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class BuyerController extends AbstractController
 {
@@ -33,31 +31,50 @@ class BuyerController extends AbstractController
      *     description="Post a buyer"
      *     )
      * )
+     * @ParamConverter("buyer", converter="fos_rest.request_body")
      * @param Buyer $buyer
      */
-    public function postBuyer(ManagerRegistry $doctrine, Request $request)
+    public function postBuyer(ManagerRegistry $doctrine, Request $request, Buyer $buyer)
+    {
+        // dd($request->getContent());
+        // dd($buyer);
+        try {
+            // $test = json_decode($request->getContent(), true);
+            // dd($test);
+            $em = $doctrine->getManager();
+            $em->persist($buyer);
+            $em->flush();
+        } catch (ResourceValidationException $e) {
+            return $this->json(["error" => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * @Get(
+     *     path = "/buyer/{id}",
+     *     name = "app_buyer_get"
+     * )
+     * @View(statusCode=200)
+     * 
+     * @QueryParam(
+     *   name="Param"
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns a buyer with details"
+     *     )
+     * )
+     */
+    public function getBuyer(ManagerRegistry $doctrine, $id)
     {
 
-        // try {
-        //     if (!$id || $id < 1 || is_int($id))
-        //         throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
-
-        //     $product = $doctrine->getRepository(Product::class)->returnProduct($id);
-        //     return $this->json($product, 200);
-        // } catch (ResourceValidationException $e) {
-        //     return $this->json(["error" => $e->getMessage()], 400);
-        // }
         try {
-            $x = new Buyer();
-            $c = new Client();
-            $test = json_decode($request->getContent(), true);
-            $x->setFullname($test['fullname'])
-                ->setClient($c->getId())
-                ->setCountry($test['country_id'])
-                ->setCreatedAt(new \DateTime);
-            $em = $doctrine->getManager();
-            $em->persist($x);
-            $em->flush();
+            if (!$id || $id < 1 || is_int($id))
+                throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
+
+            $buyer = $doctrine->getRepository(Buyer::class)->returnBuyer($id);
+            // dd($buyer);
+            return $this->json($buyer, 200);
         } catch (ResourceValidationException $e) {
             return $this->json(["error" => $e->getMessage()], 400);
         }
