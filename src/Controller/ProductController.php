@@ -11,6 +11,7 @@ use App\Controller\PaginationController;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use App\Exception\ResourceValidationException;
 use Doctrine\SqlFormatter\Token;
+use Firebase\JWT\JWT;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Token\AccessToken;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -24,7 +25,7 @@ class ProductController extends AbstractController
 {
     /**
      * @Get(
-     *     path = "/api/product/{id}",
+     *     path = "v1/api/product/{id}",
      *     name = "app_product_get"
      * )
      * @View(statusCode=200)
@@ -38,24 +39,28 @@ class ProductController extends AbstractController
      *     )
      * )
      */
-    public function getProduct(ManagerRegistry $doctrine, $id, Request $request, SessionInterface $session)
+    public function getProduct(ManagerRegistry $doctrine, $id, ApiAuthController $tokenController)
     {
-
-        $tokenOnRequest = $request->headers->get('authorization');
-
-        $d = $session->get('test', ['token n\'existe pas']);
-
-        dd($d);
-
         try {
-            if ($token !== $tokenOnRequest)
-                throw new ResourceValidationException("Le token est invalide");
+            if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
+
+                throw new ResourceValidationException("Vous n'êtes pas autorisé");
+            }
             if (!$id || $id < 1 || is_int($id))
                 throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
+            $key = "secure_coding";
+            $jwt = preg_split("/ /", $_SERVER['HTTP_AUTHORIZATION'])[1];
+
+            $decoded = JWT::decode($jwt, $key, array('HS256'));
+
+            $tokenController->isValidateToken($decoded);
 
             $product = $doctrine->getRepository(Product::class)->returnProduct($id);
+            if (empty($product))
+                throw new ResourceValidationException("Aucune donnée avec cette id");
             return $this->json($product, 200);
         } catch (ResourceValidationException $e) {
+
             return $this->json(["error" => $e->getMessage()], 400);
         }
     }
