@@ -10,9 +10,15 @@ use FOS\RestBundle\Controller\Annotations\View;
 use App\Controller\PaginationController;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use App\Exception\ResourceValidationException;
+use Doctrine\SqlFormatter\Token;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use League\OAuth2\Client\Token\AccessToken;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ProductController extends AbstractController
 {
@@ -32,10 +38,18 @@ class ProductController extends AbstractController
      *     )
      * )
      */
-    public function getProduct(ManagerRegistry $doctrine, $id)
+    public function getProduct(ManagerRegistry $doctrine, $id, Request $request, SessionInterface $session)
     {
 
+        $tokenOnRequest = $request->headers->get('authorization');
+
+        $d = $session->get('test', ['token n\'existe pas']);
+
+        dd($d);
+
         try {
+            if ($token !== $tokenOnRequest)
+                throw new ResourceValidationException("Le token est invalide");
             if (!$id || $id < 1 || is_int($id))
                 throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
 

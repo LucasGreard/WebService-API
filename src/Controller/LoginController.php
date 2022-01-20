@@ -13,9 +13,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\Annotations\Get;
+use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\Response;
-
-
+use App\Controller\TokenController;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class LoginController extends AbstractController
 {
@@ -39,27 +41,31 @@ class LoginController extends AbstractController
      *
      * @Route("/api/connect/google/check", name="connect_google_check")
      */
-    public function connectCheckAction(ClientRegistry $clientRegistry, ManagerRegistry $doctrine)
+    public function connectCheckAction(ClientRegistry $clientRegistry, ManagerRegistry $doctrine, TokenController $token)
     {
-        //Vérifier si un client avec l'adresse email existe
-        //Si Oui, le connecter avec User
-        //Si Non, le créer en bdd
+        $accessGoogle = $clientRegistry->getClient('google');
 
-        $dataGoogle = $clientRegistry->getClient('google')
-            ->fetchUser()
+        $tokenAccess = $accessGoogle->getAccessToken();
+
+        $token->setToken($tokenAccess);
+
+        dd($token->getToken());
+
+        $dataGoogle = $accessGoogle->fetchUserFromToken($tokenAccess)
             ->toArray();
-        //Créer un token valable xtime 
-        //Ensuite, afficher une page panel avec le token
-        $x = $this->userExist($dataGoogle, $doctrine);
-        
-        return $this->redirectToRoute('app_clientPanel_get');
 
-        // $clientRegistry->getClient('google')->getAccessToken(); //Créer et récupère un token de google
+        $this->userExist($dataGoogle, $doctrine);
+
+        return $this->render(
+            'client/default.html.twig',
+            [
+                'tokenAccess' => $tokenAccess
+            ]
+        );
     }
+
     private function userExist($dataGoogle, $doctrine)
     {
-        //MAnque une table email pour Client
-        //Manque la connexion 
         $user = $doctrine->getRepository(Client::class)->findOneBy(['email' => $dataGoogle['email']]);
         if (!$user) {
             $user = new Client();
@@ -70,14 +76,5 @@ class LoginController extends AbstractController
             $doctrine->getManager()->flush();
         }
         return $user;
-    }
-    /**
-     * @Route("/client", name="app_clientPanel_get")
-     */
-    public function clientPanel(): Response
-    {
-        return $this->render(
-            'client/default.html.twig'
-        );
     }
 }
