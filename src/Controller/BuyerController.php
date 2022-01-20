@@ -18,7 +18,7 @@ class BuyerController extends AbstractController
 {
     /**
      * @Post(
-     *     path = "/buyers",
+     *     path = "/api/buyers",
      *     name = "app_buyers_post"
      * )
      * @View(statusCode=201)
@@ -51,7 +51,7 @@ class BuyerController extends AbstractController
 
     /**
      * @Get(
-     *     path = "/buyer/{id}",
+     *     path = "/api/buyer/{id}",
      *     name = "app_buyer_get"
      * )
      * @View(statusCode=200)
