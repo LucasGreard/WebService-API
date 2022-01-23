@@ -33,8 +33,8 @@ $ git clone https://github.com/LucasGreard/WebService-API
 $ symfony server:start
 ```
 
-Lancer Wamp en local
-Accéder à https://127.0.0.1:8000/v1/api/doc
+- Lancer Wamp en local
+- Accéder à https://127.0.0.1:8000/v1/api/doc
 
 ## Fabriqué avec
 
