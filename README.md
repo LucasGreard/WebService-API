@@ -19,11 +19,11 @@ J'utilise Symfony 5 comme FrameWork et Visual Studio Code pour le code et le mai
 Ce qu'il est requis pour commencer avec le projet
 
 ```
-$ git composer require friendsofsymfony/rest-bundle
-$ git composer require jms/serializer-bundle
-$ git composer require pagerfanta/pagerfanta
-$ git composer require symfony/http-client
-$ git composer require league/oauth2-server
+Postman for Windows // Version 9.9.3 // Architecture x64 // Platform win32 10.0.19043
+PHP 7.4.9
+MySql 5.7.31
+Symfony 5.4.0
+Composer version 2.1.9
 ```
 
 ### Installation
