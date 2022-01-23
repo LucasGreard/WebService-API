@@ -37,7 +37,7 @@ class ProductController extends AbstractController
             $product = $doctrine->getRepository(Product::class)->returnProduct($id);
             if (empty($product))
                 throw new ResourceValidationException("Aucune donnée avec cette id");
-            return $this->json($product, 200);
+            return $this->json($this->resultProductJson($product), 200);
         } catch (ResourceValidationException $e) {
 
             return $this->json(["error" => $e->getMessage()], 400);
@@ -78,11 +78,34 @@ class ProductController extends AbstractController
 
             return $this->json([
                 $paginate->getModelPagination($limit, $page, $nbPage),
-                $result
+                $this->resultProductJson($result)
             ], 200,);
         } catch (ResourceValidationException $e) {
 
             return $this->json(["error" => $e->getMessage()], 400);
         }
+    }
+    private function resultProductJson($result)
+    {
+
+        return [
+            "Product : ", [
+                'Id' => $result[0]->getId(),
+                'Fullname' => $result[0]->getfullname(),
+                'Model' => $result[0]->getmodel(),
+                'Brand (Current Money)' => $result[0]->getbrand()->getbrand(),
+                'Price' => $result[0]->getprice(),
+                'Resolution (Pixels)' => [
+                    'Height' => $result[0]->getResolutionId()->getheight(),
+                    'Width' => $result[0]->getResolutionId()->getwidth(),
+                ],
+                'Operating System' => $result[0]->getOperatingSystemId()->getoperatingSystem(),
+                'Weight (g)' => $result[0]->getweight(),
+                'Screen Size (inch)' => $result[0]->getScreenSize(),
+                'Storage (Go)' => $result[0]->getstorage(),
+                'Battery (mAh)' => $result[0]->getbattery(),
+                'Ram (Go)' => $result[0]->getRAM()
+            ]
+        ];
     }
 }

@@ -83,7 +83,7 @@ class BuyerController extends AbstractController
             ]);
             if (empty($buyer))
                 throw new ResourceValidationException("Aucune donnée avec cette id");
-            return $this->json($buyer, 200);
+            return $this->json($this->resultBuyerJson($buyer), 200);
         } catch (ResourceValidationException $e) {
 
             return $this->json(["error" => $e->getMessage()], 400);
@@ -127,7 +127,7 @@ class BuyerController extends AbstractController
 
             return $this->json([
                 $paginate->getModelPagination($limit, $page, $nbPage),
-                $result
+                $this->resultBuyerJson($result)
             ], 200,);
         } catch (ResourceValidationException $e) {
 
@@ -157,20 +157,33 @@ class BuyerController extends AbstractController
             $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
 
             $repository = $doctrine->getRepository(Buyer::class);
-            $product = $repository->findOneBy([
+            $buyer = $repository->findOneBy([
                 'id' => $id,
                 'client' => $client
             ]);
-            if (!$product || empty($product))
+            if (!$buyer || empty($buyer))
                 throw new ResourceValidationException("Aucun buyer avec cette id");
 
             $entityManager = $doctrine->getManager();
-            $entityManager->remove($product);
+            $entityManager->remove($buyer);
             $entityManager->flush();
-            return $this->json($product, 200,);
+            return $this->json($buyer, 200,);
         } catch (ResourceValidationException $e) {
 
             return $this->json(["error" => $e->getMessage()], 400);
         }
+    }
+    private function resultBuyerJson($buyer)
+    {
+        return [
+            "Buyer : ", [
+                'Id' => $buyer[0]->getId(),
+                'Fullname' => $buyer[0]->getfullname(),
+                'Created_At' => $buyer[0]->getCreatedAt(),
+                'City' => $buyer[0]->getCity(),
+                'Postal Code' => $buyer[0]->getPostalCode(),
+                'Age (years)' => $buyer[0]->getAge()
+            ]
+        ];
     }
 }
