@@ -66,7 +66,7 @@ class ApiAuthController extends AbstractController
         header("Content-Type: application/json");
         return JWT::encode($payload, $key);
     }
-    public function isValidateToken($tokenDecoded)
+    public function isExpirationToken($tokenDecoded)
     {
         try {
             $now = time();
@@ -77,5 +77,16 @@ class ApiAuthController extends AbstractController
         } catch (ResourceValidationException $e) {
             return $this->json(["error" => $e->getMessage()], 400);
         }
+    }
+    public function valideToken()
+    {
+        if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))
+            throw new ResourceValidationException("Vous n'êtes pas autorisé");
+        $key = "secure_coding";
+        $jwt = preg_split("/ /", $_SERVER['HTTP_AUTHORIZATION'])[1];
+
+        $decoded = JWT::decode($jwt, $key, array('HS256'));
+        $this->isExpirationToken($decoded);
+        return json_decode(json_encode($decoded), true);
     }
 }

@@ -38,18 +38,10 @@ class BuyerController extends AbstractController
      */
     public function postBuyer(ManagerRegistry $doctrine, Request $request, Buyer $buyer, ApiAuthController $tokenController)
     {
-        if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))
-            throw new ResourceValidationException("Vous n'êtes pas autorisé");
-        $key = "secure_coding";
         try {
-            $jwt = preg_split("/ /", $_SERVER['HTTP_AUTHORIZATION'])[1];
 
-            $decoded = JWT::decode($jwt, $key, array('HS256'));
-            $tokenController->isValidateToken($decoded);
-
-            $decoded = json_decode(json_encode($decoded), true);
-
-            $client = $doctrine->getRepository(Client::class)->findClientId($decoded['iss']);
+            $tokenDecoded = $tokenController->valideToken();
+            $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
             $buyer->setClient($client)
                 ->setCreatedAt(new DateTime('now'));
 
@@ -78,18 +70,11 @@ class BuyerController extends AbstractController
      */
     public function getBuyer(ManagerRegistry $doctrine, $id, ApiAuthController $tokenController)
     {
-        if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))
-            throw new ResourceValidationException("Vous n'êtes pas autorisé");
-        $key = "secure_coding";
+
         try {
-            $jwt = preg_split("/ /", $_SERVER['HTTP_AUTHORIZATION'])[1];
+            $tokenDecoded = $tokenController->valideToken();
 
-            $decoded = JWT::decode($jwt, $key, array('HS256'));
-            $tokenController->isValidateToken($decoded);
-
-            $decoded = json_decode(json_encode($decoded), true);
-
-            $client = $doctrine->getRepository(Client::class)->findClientId($decoded['iss']);
+            $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
             if (!$id || $id < 1 || is_int($id))
                 throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
             $buyer = $doctrine->getRepository(Buyer::class)->findBy([
@@ -120,26 +105,16 @@ class BuyerController extends AbstractController
      */
     public function getBuyers(ManagerRegistry $doctrine, $limit, $page, ApiAuthController $tokenController)
     {
-        if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))
-            throw new ResourceValidationException("Vous n'êtes pas autorisé");
-        $key = "secure_coding";
-        try {
-            if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
 
-                throw new ResourceValidationException("Vous n'êtes pas autorisé");
-            }
+        try {
+            $tokenDecoded = $tokenController->valideToken();
             if (!$limit || $limit < 1 || is_int($limit))
                 throw new ResourceValidationException("La valeur de limit n'est pas bonne");
 
             if (!$page || $page < 1 || is_int($page))
                 throw new ResourceValidationException("La valeur de page n'est pas bonne");
-            $jwt = preg_split("/ /", $_SERVER['HTTP_AUTHORIZATION'])[1];
 
-            $decoded = JWT::decode($jwt, $key, array('HS256'));
-            $tokenController->isValidateToken($decoded);
-
-            $decoded = json_decode(json_encode($decoded), true);
-            $client = $doctrine->getRepository(Client::class)->findClientId($decoded['iss']);
+            $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
 
             $buyer = $doctrine->getRepository(Buyer::class)->findBy([
                 'client' => $client
@@ -174,25 +149,12 @@ class BuyerController extends AbstractController
      */
     public function deleteBuyers(ManagerRegistry $doctrine, $id, ApiAuthController $tokenController)
     {
-        if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))
-            throw new ResourceValidationException("Vous n'êtes pas autorisé");
-        $key = "secure_coding";
         try {
-            if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
-
-                throw new ResourceValidationException("Vous n'êtes pas autorisé");
-            }
+            $tokenDecoded = $tokenController->valideToken();
             if (!$id || $id < 1 || is_int($id))
                 throw new ResourceValidationException("La valeur de id n'est pas bonne");
 
-            $jwt = preg_split("/ /", $_SERVER['HTTP_AUTHORIZATION'])[1];
-
-            $decoded = JWT::decode($jwt, $key, array('HS256'));
-            $tokenController->isValidateToken($decoded);
-
-            $decoded = json_decode(json_encode($decoded), true);
-
-            $client = $doctrine->getRepository(Client::class)->findClientId($decoded['iss']);
+            $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
 
             $repository = $doctrine->getRepository(Buyer::class);
             $product = $repository->findOneBy([
