@@ -1,4 +1,4 @@
-# Créez un web service exposant une API
+# Créez un web service exposant une API (V1)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/636dbbb7cdd4458f9b45d54d4d52eff9)](https://www.codacy.com/gh/LucasGreard/Snowtricks_V5/dashboard?utm_source=github.com&utm_medium=referral&utm_content=LucasGreard/Snowtricks_V5&utm_campaign=Badge_Grade)
 
@@ -30,7 +30,11 @@ Composer version 2.1.9
 
 ```
 $ git clone https://github.com/LucasGreard/WebService-API
+$ symfony server:start
 ```
+
+Lancer Wamp en local
+Accéder à https://127.0.0.1:8000/v1/api/doc
 
 ## Fabriqué avec
 
