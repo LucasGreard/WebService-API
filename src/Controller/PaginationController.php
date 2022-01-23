@@ -46,9 +46,9 @@ class PaginationController extends AbstractController
         return [
             "paginate : ",
             [
-                "limit" => $limit,
-                "number of page" => $nbPage,
-                "current page" => $page
+                "Limit" => $limit,
+                "Page n°" => $nbPage,
+                "Number of page" => $page
             ]
         ];
     }

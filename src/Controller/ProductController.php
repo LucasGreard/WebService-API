@@ -30,22 +30,18 @@ class ProductController extends AbstractController
      * )
      * @View(statusCode=200)
      * 
-     * @QueryParam(
-     *   name="Param"
-     * )
      * @OA\Response(
      *     response=200,
-     *     description="Returns a product with details"
+     *     description="Returns a product with details (Need authentification)"
      *     )
      * )
      */
     public function getProduct(ManagerRegistry $doctrine, $id, ApiAuthController $tokenController)
     {
         try {
-            if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
-
+            if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))
                 throw new ResourceValidationException("Vous n'êtes pas autorisé");
-            }
+
             if (!$id || $id < 1 || is_int($id))
                 throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
             $key = "secure_coding";
@@ -67,33 +63,39 @@ class ProductController extends AbstractController
 
     /**
      * @Get(
-     *     path = "/api/products&limit={limit}&page={page}",
+     *     path = "v1/api/products&limit={limit}&page={page}",
      *     name = "app_products_get",
      * )
      * @View
-     * @QueryParam(
-     *   name="limit"
-     * )
-     * @QueryParam(
-     *   name="page"
-     * )
      * @OA\Response(
      *     response=200,
-     *     description="Returns all product with details (We need a limit and a page)"
+     *     description="Returns all product with details (We need a limit and a page) (Need authentification)"
      *     )
      * )
      */
-    public function getProducts(ManagerRegistry $doctrine, $limit, $page, PaginationController $paginate)
+    public function getProducts(ManagerRegistry $doctrine, $limit, $page, PaginationController $paginate, ApiAuthController $tokenController)
     {
-        try {
 
+        try {
+            if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
+
+                throw new ResourceValidationException("Vous n'êtes pas autorisé");
+            }
             if (!$limit || $limit < 1 || is_int($limit))
                 throw new ResourceValidationException("La valeur de limit n'est pas bonne");
 
             if (!$page || $page < 1 || is_int($page))
                 throw new ResourceValidationException("La valeur de page n'est pas bonne");
 
+            $key = "secure_coding";
+            $jwt = preg_split("/ /", $_SERVER['HTTP_AUTHORIZATION'])[1];
+
+            $decoded = JWT::decode($jwt, $key, array('HS256'));
+
+            $tokenController->isValidateToken($decoded);
+
             $products = $doctrine->getRepository(Product::class)->findAll();
+
             $paginate = new PaginationController();
             $result = $paginate->paginate($products, $limit, $page);
             $nbPage = $paginate->nbPage($products, $limit);
@@ -106,6 +108,7 @@ class ProductController extends AbstractController
                 $result
             ], 200,);
         } catch (ResourceValidationException $e) {
+
             return $this->json(["error" => $e->getMessage()], 400);
         }
     }

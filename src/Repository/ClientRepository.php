@@ -47,4 +47,28 @@ class ClientRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findClientId($value)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT c
+            FROM App\Entity\Client c
+            WHERE c.email = :email'
+        )->setParameter('email', $value);
+
+        return $query->getSingleResult();
+    }
+    public function findClientByKey($value)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT c.email
+            FROM App\Entity\Client c
+            WHERE c.api_key = :api_key'
+        )->setParameter('api_key', $value);
+
+        return $query->getResult();
+    }
 }

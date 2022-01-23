@@ -24,8 +24,9 @@ class LoginController extends AbstractController
     /**
      * Link to this controller to start the "connect" process
      *
-     * @Route("/api/connect/google", name="connect_google_start")
+     * 
      */
+    //@Route("/api/connect/google", name="connect_google_start")
     public function connectAction(ClientRegistry $clientRegistry)
     {
         // will redirect to google!
@@ -39,8 +40,9 @@ class LoginController extends AbstractController
      * because this is the "redirect_route" you configured
      * in config/packages/knpu_oauth2_client.yaml
      *
-     * @Route("/api/connect/google/check", name="connect_google_check")
+     * 
      */
+    //@Route("/api/connect/google/check", name="connect_google_check")
     public function connectCheckAction(ClientRegistry $clientRegistry, ManagerRegistry $doctrine, TokenController $token)
     {
         $accessGoogle = $clientRegistry->getClient('google');

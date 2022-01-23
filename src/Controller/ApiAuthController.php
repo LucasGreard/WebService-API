@@ -14,12 +14,13 @@ use FOS\RestBundle\Controller\Annotations\View;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Firebase\JWT\JWT;
+use Symfony\Component\HttpFoundation\Request;
 
 class ApiAuthController extends AbstractController
 {
     /**
      * @Get(
-     *     path = "v1/api/auth&token={token}",
+     *     path = "v1/api/auth",
      *     name = "api_auth_get"
      * )
      * @View(statusCode=200)
@@ -30,29 +31,34 @@ class ApiAuthController extends AbstractController
      *     )
      * )
      */
-    public function apiAuth($token, ManagerRegistry $doctrine)
+    public function apiAuth(ManagerRegistry $doctrine, Request $requet)
     {
-        $user = $doctrine->getRepository(Client::class)->findOneBy(['api_key' => $token]);
+        $auth = explode("Bearer ", $requet->headers->get("authorization"))[1];
+
+        $user = $doctrine->getRepository(Client::class)->findOneBy(['api_key' => $auth]);
+        $emailClient = $doctrine->getRepository(Client::class)->findClientByKey($auth);
+        // dd($emailClient);
         try {
             if (!$user)
                 throw new ResourceValidationException("La clé API est invalide ou n'existe pas");
-            $tokenJWT = $this->createJWT();
+
             return $this->json([
-                "Token" => $tokenJWT,
-                "Expiration time" => "One hour",
-                "Type" => "Bearer"
+                "Token" =>  $this->createJWT($emailClient[0]['email']),
+                "Expiration time (in seconds)" => 3600,
+                "Type" => "Bearer",
+                $emailClient[0]
             ], 200);
         } catch (ResourceValidationException $e) {
             return $this->json(["error" => $e->getMessage()], 400);
         }
     }
-    private function createJWT()
+    private function createJWT($emailClient)
     {
         $now_seconds = time();
         $key = "secure_coding";
         $payload = [
 
-            "iss" => "lucas.greard07@gmail.com",
+            "iss" => $emailClient,
             "aud" => "https://127.0.0.1:8000/v1/api/doc",
             "iat" => $now_seconds,
             "exp" => $now_seconds + (60 * 60)
