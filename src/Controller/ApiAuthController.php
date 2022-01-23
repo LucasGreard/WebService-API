@@ -32,13 +32,17 @@ class ApiAuthController extends AbstractController
      *     )
      * )
      */
-    public function apiAuth(ManagerRegistry $doctrine, Request $requet)
+    public function apiAuth(ManagerRegistry $doctrine, Request $request)
     {
-        $auth = explode("Bearer ", $requet->headers->get("authorization"))[1];
-
-        $user = $doctrine->getRepository(Client::class)->findOneBy(['api_key' => $auth]);
-        $emailClient = $doctrine->getRepository(Client::class)->findClientByKey($auth);
         try {
+            if (!$request->headers->get("authorization"))
+                throw new ResourceValidationException("Enter your Bearer Token");
+
+            $auth = explode("Bearer ", $request->headers->get("authorization"))[1];
+
+            $user = $doctrine->getRepository(Client::class)->findOneBy(['api_key' => $auth]);
+            $emailClient = $doctrine->getRepository(Client::class)->findClientByKey($auth);
+
             if (!$user)
                 throw new ResourceValidationException("API key is invalid or does not exist");
 
@@ -49,7 +53,9 @@ class ApiAuthController extends AbstractController
                 "Email" => $emailClient[0]['email']
             ], 200);
         } catch (ResourceValidationException $e) {
-            return $this->json(["error" => $e->getMessage()], 400);
+            return $this->json([
+                "error" => $e->getMessage()
+            ], 400);
         }
     }
 
@@ -77,7 +83,10 @@ class ApiAuthController extends AbstractController
             if ($now > $tokenArray['exp'])
                 throw new ResourceValidationException("The API key has expired, log in again to get a new one");
         } catch (ResourceValidationException $e) {
-            return $this->json(["error" => $e->getMessage()], 400);
+            return $this->json([
+                "error" => $e->getMessage(),
+                "_link" => "https://127.0.0.1:8000/v1/api/auth"
+            ], 400);
         }
     }
 
