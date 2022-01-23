@@ -25,7 +25,7 @@ class PaginationController extends AbstractController
             $pagerfanta = $this->createPagerFanta($data);
             $pagerfanta->setMaxPerPage($limit);
             if ($page > $pagerfanta->getNbPages())
-                throw new ResourceValidationException('La limite de page est de ' . $pagerfanta->getNbPages());
+                throw new ResourceValidationException('The page limit is ' . $pagerfanta->getNbPages());
 
             $pagerfanta->setCurrentPage($page);
             return $pagerfanta->getCurrentPageResults();

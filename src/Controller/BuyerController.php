@@ -6,7 +6,6 @@ use App\Entity\Buyer;
 use App\Entity\Client;
 use App\Exception\ResourceValidationException;
 use DateTime;
-use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,8 +13,6 @@ use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
-use FOS\RestBundle\Controller\Annotations\QueryParam;
-use Firebase\JWT\JWT;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -30,13 +27,23 @@ class BuyerController extends AbstractController
      * 
      * @OA\Response(
      *     response=201,
-     *     description="Post a buyer"
+     *     description="Post a buyer (Need authentification)"
+     *     )
+     * )
+     * @OA\Response(
+     *     response=415,
+     *     description="Unsupported Media Type (A JSON file is missing with the user info to add)"
+     *     )
+     * )
+     * @OA\Response(
+     *     response=400,
+     *     description="You are not authorized"
      *     )
      * )
      * @ParamConverter("buyer", converter="fos_rest.request_body")
      * @param Buyer $buyer
      */
-    public function postBuyer(ManagerRegistry $doctrine, Request $request, Buyer $buyer, ApiAuthController $tokenController)
+    public function postBuyer(ManagerRegistry $doctrine, Buyer $buyer, ApiAuthController $tokenController)
     {
         try {
 
@@ -66,6 +73,11 @@ class BuyerController extends AbstractController
      *     response=200,
      *     description="Returns a buyer with details (Need authentification)"
      *     )
+     * )     
+     * @OA\Response(
+     *     response=400,
+     *     description="You are not authorized or the value of the id is not good, id must be an integer strictly greater than 1 "
+     *     )
      * )
      */
     public function getBuyer(ManagerRegistry $doctrine, $id, ApiAuthController $tokenController)
@@ -76,13 +88,13 @@ class BuyerController extends AbstractController
 
             $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
             if (!$id || $id < 1 || is_int($id))
-                throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
+                throw new ResourceValidationException("The value of the id is not good, id must be an integer strictly greater than 1");
             $buyer = $doctrine->getRepository(Buyer::class)->findBy([
                 'id' => $id,
                 'client' => $client
             ]);
             if (empty($buyer))
-                throw new ResourceValidationException("Aucune donnée avec cette id");
+                throw new ResourceValidationException("No data with this id");
             return $this->json($this->resultBuyerJson($buyer), 200);
         } catch (ResourceValidationException $e) {
 
@@ -102,6 +114,11 @@ class BuyerController extends AbstractController
      *     description="Returns all buyers (We need a limit and a page)(Need authentification)"
      *     )
      * )
+     * @OA\Response(
+     *     response=400,
+     *     description="You are not authorized or the value of the limit or page is not good, limit/page must be an integer strictly greater than 1 "
+     *     )
+     * )
      */
     public function getBuyers(ManagerRegistry $doctrine, $limit, $page, ApiAuthController $tokenController)
     {
@@ -109,10 +126,10 @@ class BuyerController extends AbstractController
         try {
             $tokenDecoded = $tokenController->valideToken();
             if (!$limit || $limit < 1 || is_int($limit))
-                throw new ResourceValidationException("La valeur de limit n'est pas bonne");
+                throw new ResourceValidationException("The limit value is not good");
 
             if (!$page || $page < 1 || is_int($page))
-                throw new ResourceValidationException("La valeur de page n'est pas bonne");
+                throw new ResourceValidationException("The page value is not good");
 
             $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
 
@@ -123,7 +140,7 @@ class BuyerController extends AbstractController
             $result = $paginate->paginate($buyer, $limit, $page);
             $nbPage = $paginate->nbPage($buyer, $limit);
             if (!$result)
-                throw new ResourceValidationException("Aucune donnée");
+                throw new ResourceValidationException("No data");
 
             return $this->json([
                 $paginate->getModelPagination($limit, $page, $nbPage),
@@ -146,13 +163,18 @@ class BuyerController extends AbstractController
      *     description="Delete a buyer (Need authentification)"
      *     )
      * )
+     * @OA\Response(
+     *     response=400,
+     *     description="You are not authorized or the value of the id is not good, id must be an integer strictly greater than 1 "
+     *     )
+     * )
      */
     public function deleteBuyers(ManagerRegistry $doctrine, $id, ApiAuthController $tokenController)
     {
         try {
             $tokenDecoded = $tokenController->valideToken();
             if (!$id || $id < 1 || is_int($id))
-                throw new ResourceValidationException("La valeur de id n'est pas bonne");
+                throw new ResourceValidationException("The value of the id is not good, id must be an integer strictly greater than 1");
 
             $client = $doctrine->getRepository(Client::class)->findClientId($tokenDecoded['iss']);
 
@@ -162,7 +184,7 @@ class BuyerController extends AbstractController
                 'client' => $client
             ]);
             if (!$buyer || empty($buyer))
-                throw new ResourceValidationException("Aucun buyer avec cette id");
+                throw new ResourceValidationException("No buyer with this id");
 
             $entityManager = $doctrine->getManager();
             $entityManager->remove($buyer);
