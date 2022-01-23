@@ -47,33 +47,23 @@ class BuyerRepository extends ServiceEntityRepository
         ;
     }
     */
-    public function returnBuyer($value)
-    {
-        // return $this->createQueryBuilder('b')
-        //     ->select('b')
-        //     ->leftJoin('App\Entity\Client', 'c', 'WITH', 'b.client = c.id')
-        //     ->leftJoin('App\Entity\Country', 'co', 'WITH', 'b.country = co.id')
-        //     ->andWhere('b.id = :val')
-        //     ->setParameter('val', $value)
-        //     ->getQuery()
-        //     ->getResult();
+    // public function returnBuyer($value)
+    // {
+    //     $entityManager = $this->getEntityManager();
 
-        $entityManager = $this->getEntityManager();
+    //     $query = $entityManager->createQuery(
+    //         'SELECT b
+    //         FROM App\Entity\Buyer b
+    //         INNER JOIN App\Entity\Client c 
+    //         WITH b.client = c.id
+    //         INNER JOIN App\Entity\Country co
+    //         WITH b.country = co.id
+    //         WHERE b.id = :id
+    //         AND b.client = c.id
+    //         AND b.country = co.id'
 
-        $query = $entityManager->createQuery(
-            'SELECT b
-            FROM App\Entity\Buyer b
-            INNER JOIN App\Entity\Client c 
-            WITH b.client = c.id
-            INNER JOIN App\Entity\Country co
-            WITH b.country = co.id
-            WHERE b.id = :id
-            AND b.client = c.id
-            AND b.country = co.id'
+    //     )->setParameter('id', $value);
+    //     return $query->getResult();
+    // }
 
-        )->setParameter('id', $value);
-
-        // returns an array of Product objects
-        return $query->getResult();
-    }
 }

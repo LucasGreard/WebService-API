@@ -23,7 +23,7 @@ class Buyer
     private $fullname;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=false)
      */
     private $created_at;
 
@@ -43,21 +43,10 @@ class Buyer
     private $age;
 
     /**
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private $product_buy = [];
-
-    /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="buyers")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=false)
      */
     private $client;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Country::class, inversedBy="buyers")
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $country;
 
     public function getId(): ?int
     {
@@ -81,9 +70,9 @@ class Buyer
         return $this->created_at;
     }
 
-    public function setCreatedAt()
+    public function setCreatedAt(\DateTime $created_at): self
     {
-        $this->created_at = new \DateTime('now');
+        $this->created_at = $created_at;
 
         return $this;
     }
@@ -124,39 +113,16 @@ class Buyer
         return $this;
     }
 
-    // public function getProductBuy(): ?array
+    //Ne pas deparagrapher => Cause une référence circulaire
+    // public function getClient()
     // {
-    //     return $this->product_buy;
+    //     return $this->client;
     // }
 
-    // public function setProductBuy(?array $product_buy): self
-    // {
-    //     $this->product_buy = $product_buy;
-
-    //     return $this;
-    // }
-
-    /*    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    public function setClient(?Client $client): self
+    public function setClient($client)
     {
         $this->client = $client;
 
         return $this;
     }
-
-    public function getCountry(): ?Country
-    {
-        return $this->country;
-    }
-
-    public function setCountry(?Country $country): self
-    {
-        $this->country = $country;
-
-        return $this;
-    }*/
 }
