@@ -25,6 +25,11 @@ class ProductController extends AbstractController
      *     description="Returns a product with details (Need authentification)"
      *     )
      * )
+     * @OA\Response(
+     *     response=400,
+     *     description="You are not authorized or the value of the id is not good, id must be an integer strictly greater than 1 "
+     *     )
+     * )
      */
     public function getProduct(ManagerRegistry $doctrine, $id, ApiAuthController $tokenController)
     {
@@ -32,11 +37,11 @@ class ProductController extends AbstractController
             $tokenController->valideToken();
 
             if (!$id || $id < 1 || is_int($id))
-                throw new ResourceValidationException("La valeur de l'id n'est pas bonne, id doit être un entier strictement supérieur à 1");
+                throw new ResourceValidationException("The value of the id is not good, id must be an integer strictly greater than 1");
 
             $product = $doctrine->getRepository(Product::class)->returnProduct($id);
             if (empty($product))
-                throw new ResourceValidationException("Aucune donnée avec cette id");
+                throw new ResourceValidationException("No data with this id");
             return $this->json($this->resultProductJson($product), 200);
         } catch (ResourceValidationException $e) {
 
@@ -55,6 +60,11 @@ class ProductController extends AbstractController
      *     description="Returns all product with details (We need a limit and a page) (Need authentification)"
      *     )
      * )
+     * @OA\Response(
+     *     response=400,
+     *     description="You are not authorized or the value of the limit/page is not good, limit/page must be an integer strictly greater than 1 "
+     *     )
+     * )
      */
     public function getProducts(ManagerRegistry $doctrine, $limit, $page, PaginationController $paginate, ApiAuthController $tokenController)
     {
@@ -62,10 +72,10 @@ class ProductController extends AbstractController
         try {
             $tokenController->valideToken();
             if (!$limit || $limit < 1 || is_int($limit))
-                throw new ResourceValidationException("La valeur de limit n'est pas bonne");
+                throw new ResourceValidationException("The limit value is not good");
 
             if (!$page || $page < 1 || is_int($page))
-                throw new ResourceValidationException("La valeur de page n'est pas bonne");
+                throw new ResourceValidationException("The page value is not good");
 
             $products = $doctrine->getRepository(Product::class)->findAll();
 
@@ -74,7 +84,7 @@ class ProductController extends AbstractController
             $nbPage = $paginate->nbPage($products, $limit);
 
             if (!$result)
-                throw new ResourceValidationException("Aucune donnée");
+                throw new ResourceValidationException("No data");
 
             return $this->json([
                 $paginate->getModelPagination($limit, $page, $nbPage),
