@@ -78,7 +78,6 @@ class ProductController extends AbstractController
                 throw new ResourceValidationException("The page value is not good");
 
             $products = $doctrine->getRepository(Product::class)->findAll();
-
             $paginate = new PaginationController();
             $result = $paginate->paginate($products, $limit, $page);
             $nbPage = $paginate->nbPage($products, $limit);
@@ -88,23 +87,37 @@ class ProductController extends AbstractController
 
             return $this->json([
                 $paginate->getModelPagination($limit, $page, $nbPage),
-                $this->resultProductJson($result)
+                $this->resultProductsJson($result, $limit)
             ], 200,);
         } catch (ResourceValidationException $e) {
 
             return $this->json(["error" => $e->getMessage()], 400);
         }
     }
+    private function resultProductsJson($result, $limit)
+    {
+        $products = [];
+        for ($i = 0; $i < $limit; $i++) {
+            $products[] = [
+                "Product : ", [
+                    'Id' => $result[$i]->getId(),
+                    'Fullname' => $result[$i]->getfullname(),
+                    'Model' => $result[$i]->getmodel(),
+                    'Brand' => $result[$i]->getbrand()->getbrand()
+                ]
+            ];
+        }
+        return $products;
+    }
     private function resultProductJson($result)
     {
-
         return [
             "Product : ", [
                 'Id' => $result[0]->getId(),
                 'Fullname' => $result[0]->getfullname(),
                 'Model' => $result[0]->getmodel(),
-                'Brand (Current Money)' => $result[0]->getbrand()->getbrand(),
-                'Price' => $result[0]->getprice(),
+                'Brand' => $result[0]->getbrand()->getbrand(),
+                'Price (Current Money)' => $result[0]->getprice(),
                 'Resolution (Pixels)' => [
                     'Height' => $result[0]->getResolutionId()->getheight(),
                     'Width' => $result[0]->getResolutionId()->getwidth(),

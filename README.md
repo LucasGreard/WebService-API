@@ -20,7 +20,7 @@ Ce qu'il est requis pour commencer avec le projet
 
 ```
 Postman for Windows // Version 9.9.3 // Architecture x64 // Platform win32 10.0.19043
-PHP 7.4.9
+PHP 7.4
 MySql 5.7.31
 Symfony 5.4.0
 Composer version 2.1.9
@@ -34,7 +34,7 @@ $ symfony server:start
 ```
 
 - Lancer Wamp en local
-- Accéder à https://127.0.0.1:8000/v1/api/doc
+- Accéder à your-localhost/v1/api/doc
 
 ## Fabriqué avec
 

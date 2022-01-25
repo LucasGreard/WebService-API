@@ -56,7 +56,11 @@ class BuyerController extends AbstractController
 
             $em->persist($buyer);
             $em->flush();
-            return $this->json($buyer, 201);
+            return $this->json([
+                'Data' => $buyer,
+                'Message' => 'Buyer created',
+                'Code' => 201
+            ], 201);
         } catch (ResourceValidationException $e) {
             return $this->json(["error" => $e->getMessage()], 400);
         }
@@ -144,7 +148,7 @@ class BuyerController extends AbstractController
 
             return $this->json([
                 $paginate->getModelPagination($limit, $page, $nbPage),
-                $this->resultBuyerJson($result)
+                $this->resultBuyersJson($result, $limit)
             ], 200,);
         } catch (ResourceValidationException $e) {
 
@@ -189,7 +193,11 @@ class BuyerController extends AbstractController
             $entityManager = $doctrine->getManager();
             $entityManager->remove($buyer);
             $entityManager->flush();
-            return $this->json($buyer, 200,);
+            return $this->json([
+                'Data' => [],
+                'Code' => 200,
+                'Message' => 'Buyer deleted'
+            ], 200,);
         } catch (ResourceValidationException $e) {
 
             return $this->json(["error" => $e->getMessage()], 400);
@@ -207,5 +215,20 @@ class BuyerController extends AbstractController
                 'Age (years)' => $buyer[0]->getAge()
             ]
         ];
+    }
+
+    private function resultBuyersJson($buyer, $limit)
+    {
+        $buyers = [];
+        for ($i = 0; $i < $limit; $i++) {
+            $buyers[] = [
+                "Buyer : ", [
+                    'Id' => $buyer[$i]->getId(),
+                    'Fullname' => $buyer[$i]->getfullname(),
+                    'Created_At' => $buyer[$i]->getCreatedAt()
+                ]
+            ];
+        }
+        return $buyers;
     }
 }
