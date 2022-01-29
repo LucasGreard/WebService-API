@@ -98,14 +98,19 @@ class ProductController extends AbstractController
     {
         $products = [];
         for ($i = 0; $i < $limit; $i++) {
-            $products[] = [
-                "Product : ", [
-                    'Id' => $result[$i]->getId(),
-                    'Fullname' => $result[$i]->getfullname(),
-                    'Model' => $result[$i]->getmodel(),
-                    'Brand' => $result[$i]->getbrand()->getbrand()
-                ]
-            ];
+            if (array_key_exists($i, $result)) {
+
+                $products[] = [
+                    "Product : ", [
+                        'Id' => $result[$i]->getId(),
+                        'Fullname' => $result[$i]->getfullname(),
+                        'Model' => $result[$i]->getmodel(),
+                        'Brand' => $result[$i]->getbrand()->getbrand()
+                    ]
+                ];
+            } else {
+                return $products;
+            }
         }
         return $products;
     }

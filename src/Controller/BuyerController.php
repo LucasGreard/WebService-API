@@ -221,13 +221,17 @@ class BuyerController extends AbstractController
     {
         $buyers = [];
         for ($i = 0; $i < $limit; $i++) {
-            $buyers[] = [
-                "Buyer : ", [
-                    'Id' => $buyer[$i]->getId(),
-                    'Fullname' => $buyer[$i]->getfullname(),
-                    'Created_At' => $buyer[$i]->getCreatedAt()
-                ]
-            ];
+            if (array_key_exists($i, $buyer)) {
+                $buyers[] = [
+                    "Buyer : ", [
+                        'Id' => $buyer[$i]->getId(),
+                        'Fullname' => $buyer[$i]->getfullname(),
+                        'Created_At' => $buyer[$i]->getCreatedAt()
+                    ]
+                ];
+            } else {
+                return $buyers;
+            }
         }
         return $buyers;
     }
