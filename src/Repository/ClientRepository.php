@@ -71,4 +71,20 @@ class ClientRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+    public function findClientByUsernameAndApikey($userEmail, $pw)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT c.email, c.api_key
+            FROM App\Entity\Client c
+            WHERE c.api_key = :api_key
+            AND c.email = :email'
+        )->setParameters([
+            'api_key' => $pw,
+            'email' => $userEmail
+        ]);
+
+        return $query->getResult();
+    }
 }

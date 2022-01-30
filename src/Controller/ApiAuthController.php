@@ -23,34 +23,31 @@ class ApiAuthController extends AbstractController
      * 
      * @OA\Response(
      *     response=200,
-     *     description="Returns a api token to connect (Need your API KEY)"
+     *     description="Returns a api token to connect (Need your API KEY and your email)"
      *     )
      * )
      * @OA\Response(
      *     response=400,
-     *     description="API key is invalid or does not exist"
+     *     description="Client is invalid or does not exist or Username or Password are blank"
      *     )
      * )
      */
     public function apiAuth(ManagerRegistry $doctrine, Request $request)
     {
         try {
-            if (!$request->headers->get("authorization"))
-                throw new ResourceValidationException("Enter your Bearer Token");
-
-            $auth = explode("Bearer ", $request->headers->get("authorization"))[1];
-
-            $user = $doctrine->getRepository(Client::class)->findOneBy(['api_key' => $auth]);
-            $emailClient = $doctrine->getRepository(Client::class)->findClientByKey($auth);
-
+            $userEmail = $request->headers->get("php-auth-user");
+            $pw = $request->headers->get("php-auth-pw");
+            if (!$userEmail || !$pw)
+                throw new ResourceValidationException("Username or Password are blank");
+            $user = $doctrine->getRepository(Client::class)->findClientByUsernameAndApikey($userEmail, $pw);
             if (!$user)
-                throw new ResourceValidationException("API key is invalid or does not exist");
+                throw new ResourceValidationException("Client is invalid or does not exist");
 
             return $this->json([
-                "Token" =>  $this->createJWT($emailClient[0]['email']),
+                "Token" =>  $this->createJWT($user[0]['email']),
                 "Expiration time (in seconds)" => 3600,
                 "Type" => "Bearer",
-                "Email" => $emailClient[0]['email']
+                "Email" => $user[0]['email']
             ], 200);
         } catch (ResourceValidationException $e) {
             return $this->json([
@@ -66,7 +63,7 @@ class ApiAuthController extends AbstractController
         $payload = [
 
             "iss" => $emailClient,
-            "aud" => "https://127.0.0.1:8000/v1/api/doc",
+            "aud" => "/v1/api/doc",
             "iat" => $now_seconds,
             "exp" => $now_seconds + (60 * 60)
         ];
@@ -85,7 +82,7 @@ class ApiAuthController extends AbstractController
         } catch (ResourceValidationException $e) {
             return $this->json([
                 "error" => $e->getMessage(),
-                "_link" => "https://127.0.0.1:8000/v1/api/auth"
+                "_link" => "/v1/api/auth"
             ], 400);
         }
     }
