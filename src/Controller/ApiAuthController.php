@@ -86,7 +86,7 @@ class ApiAuthController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            if (!$data || $data = null)
+            if (!$data || $data == null)
                 throw new ResourceValidationException("JSON missing, read documentation at /v1/api/doc");
 
             $userEmail = $data['email'];
