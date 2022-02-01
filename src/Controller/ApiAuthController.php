@@ -90,10 +90,10 @@ class ApiAuthController extends AbstractController
                 throw new ResourceValidationException("JSON missing, read documentation at /v1/api/doc");
 
             $userEmail = $data['email'];
-            $pw = $data['api_key'];
-            if (!$userEmail || !$pw || !$data)
+            $password = $data['api_key'];
+            if (!$userEmail || !$password || !$data)
                 throw new ResourceValidationException("Username or Password are blank");
-            $user = $doctrine->getRepository(Client::class)->findClientByUsernameAndApikey($userEmail, $pw);
+            $user = $doctrine->getRepository(Client::class)->findClientByUsernameAndApikey($userEmail, $password);
             if (!$user)
                 throw new ResourceValidationException("Client is invalid or does not exist");
 
